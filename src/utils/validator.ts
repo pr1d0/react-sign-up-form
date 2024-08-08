@@ -1,6 +1,6 @@
 import { ValidateRule } from "./validateRules";
 
-interface ValidateResult {
+export interface ValidateResult {
     results: ValidateRuleResult[];
     isValid: boolean;
     rules: ValidateRule[];
@@ -12,9 +12,10 @@ export interface ValidateRuleResult {
     message: string;
 }
 
-interface ValidateFormResult {
-    [input: string]: { validate: ValidateResult };
-    isValid: boolean;
+export interface ValidateFormResult {
+    [input: string]: {
+        validate: ValidateResult
+    };
 }
 
 class Validator {
@@ -34,8 +35,8 @@ class Validator {
         };
     }
 
-    static validateForm(form: { [input: string]: { validate: { rules: ValidateRule[] } } }, formInputs: HTMLFormControlsCollection[]): ValidateFormResult {
-        const validateFormResult: ValidateFormResult = { ...form, isValid: true };
+    static validateForm(form: { [input: string]: { validate: { rules: ValidateRule[] } } }, formInputs: any ): ValidateFormResult {
+        const validateFormResult: any = { ...form, isValid: true};
 
         for (const input in form) {
             const value = formInputs[input].value;

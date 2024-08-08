@@ -1,7 +1,7 @@
 import { Component, ReactNode } from 'react';
 import './assets/sass/form.scss';
-import Validator, { ValidateRuleResult } from './utils/validator';
-import { ValidateRule } from './utils/validateRules';
+import Validator, { ValidateResult, ValidateRuleResult } from './utils/validator';
+import { ValidateRule, } from './utils/validateRules';
 import { emailValidateRules, passwordValidateRules } from './utils/validateRules';
 
 interface FormProps {
@@ -42,13 +42,13 @@ interface InputValidateMessageProps {
 }
 
 interface SignUpFormValidateState {
-    form: { [input: string]: { validate: ValidateRuleResult } };
+    form: { [input: string]: { validate: ValidateResult } };
     isFormSubmitted: boolean;
     showPassword: boolean;
 }
 
 interface FormValidateFields {
-    [input: string]: { validate: { rules: ValidateRule[] } }
+    [input: string]: { validate: ValidateResult }
 }
 
 function Form(props: FormProps) {
@@ -142,12 +142,17 @@ class SignUpFormValidate extends Component<{}, SignUpFormValidateState> {
     form: FormValidateFields = {
         email: {
             validate: {
+                isValid: false,
                 rules: emailValidateRules,
+                results: []
             }
         },
         password: {
             validate: {
+                isValid: false,
                 rules: passwordValidateRules,
+                results: []
+
             }
         }
     }
@@ -163,7 +168,7 @@ class SignUpFormValidate extends Component<{}, SignUpFormValidateState> {
 
         const form = { ...this.form };
         const formInputs = event.currentTarget.elements;
-        const validateFormResult = Validator.validateForm(form, formInputs as any);
+        const validateFormResult = Validator.validateForm(form, formInputs as HTMLFormControlsCollection);
 
         this.setState({ form: validateFormResult, isFormSubmitted: true });
 
@@ -193,7 +198,7 @@ class SignUpFormValidate extends Component<{}, SignUpFormValidateState> {
         const { form, showPassword, isFormSubmitted } = this.state;
 
         return (
-            <Form action="api/user/signup" onSubmit={event => this.handleFormSubmitEvent(event)} noValidate>
+            <Form action="api/user/signup" onSubmit={(event: React.FormEvent<HTMLFormElement>) => this.handleFormSubmitEvent(event)} noValidate>
                 <FormTitle>Sign up</FormTitle>
                 <FormRow>
                     <Input type="email" name='email'
